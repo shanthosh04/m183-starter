@@ -103,7 +103,7 @@ const getPosts = (req, res) => {
     return res.status(401).json({ error: "Invalid token." });
   }
   if (!tokenValidation.data.roles?.includes("viewer")) {
-    return res.status(403).json({ error: "You are not an admin." });
+    return res.status(403).json({ error: "You are not a viewer." });
   }
   return res.send(posts);
 };
