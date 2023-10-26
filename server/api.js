@@ -89,7 +89,7 @@ const login = async (req, res) => {
   return res.send(token);
 };
 
-const getPosts = (req, res) => {
+const getPosts = async (req, res) => {
   const authorization = req.headers.authorization;
   if (!authorization) {
     return res.status(401).json({ error: "No authorization header." });
@@ -105,7 +105,15 @@ const getPosts = (req, res) => {
   if (!tokenValidation.data.roles?.includes("viewer")) {
     return res.status(403).json({ error: "You are not a viewer." });
   }
-  return res.send(posts);
+  const getPostsQuery = "SELECT * FROM posts;";
+  try {
+    const fetchedPosts = await queryDB(db, getPostsQuery);
+    return res.json(fetchedPosts);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error." });
+  }
 };
+
 
 module.exports = { initializeAPI };
