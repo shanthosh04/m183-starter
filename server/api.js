@@ -105,7 +105,7 @@ const getPosts = async (req, res) => {
   if (!tokenValidation.data.roles?.includes("viewer")) {
     return res.status(403).json({ error: "You are not a viewer." });
   }
-  const getPostsQuery = "SELECT * FROM posts;";
+ const getPostsQuery = "SELECT * FROM posts;";
   try {
     const fetchedPosts = await queryDB(db, getPostsQuery);
     return res.json(fetchedPosts);
