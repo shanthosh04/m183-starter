@@ -2,11 +2,19 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const { initializeDatabase, queryDB } = require("./database");
 const jwt = require("jsonwebtoken");
+const AesEncryption = require('aes-encryption')
+
+const aes = new AesEncryption()
+aes.setSecretKey(AES_SECRET2)
+
+const encrypted = aes.encrypt('plain-text')
+
+const decrypted = aes.decrypt(encrypted)
 
 let db;
-
+ 
 const jwtSecret = process.env.JWT_SECRET || "supersecret";
-
+ 
 const posts = [
   {
     id: 1,
@@ -27,7 +35,7 @@ const posts = [
       "Asynchronous programming allows operations to run in parallel without blocking the main thread...",
   },
 ];
-
+ 
 const initializeAPI = async (app) => {
   db = initializeDatabase();
   app.post(
@@ -45,7 +53,7 @@ const initializeAPI = async (app) => {
   );
   app.get("/api/posts", getPosts);
 };
-
+ 
 const login = async (req, res) => {
   // Validate request
   const result = validationResult(req);
@@ -57,7 +65,7 @@ const login = async (req, res) => {
     });
     return res.status(400).json(formattedErrors);
   }
-
+ 
   // Check if user exists
   const { username, password } = req.body;
   const getUserQuery = `
@@ -85,11 +93,11 @@ const login = async (req, res) => {
     },
     jwtSecret
   );
-
+ 
   return res.send(token);
 };
-
-const getPosts = async (req, res) => {
+ 
+const getPosts = async(req, res) => {
   const authorization = req.headers.authorization;
   if (!authorization) {
     return res.status(401).json({ error: "No authorization header." });
@@ -105,7 +113,7 @@ const getPosts = async (req, res) => {
   if (!tokenValidation.data.roles?.includes("viewer")) {
     return res.status(403).json({ error: "You are not a viewer." });
   }
- const getPostsQuery = "SELECT * FROM posts;";
+  const getPostsQuery = "SELECT * FROM posts;";
   try {
     const fetchedPosts = await queryDB(db, getPostsQuery);
     return res.json(fetchedPosts);
@@ -114,6 +122,6 @@ const getPosts = async (req, res) => {
     return res.status(500).json({ error: "Internal server error." });
   }
 };
-
-
+ 
 module.exports = { initializeAPI };
+ 

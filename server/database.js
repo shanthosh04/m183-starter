@@ -23,4 +23,5 @@ const queryDB = (db, query) => {
   });
 };
 
+
 module.exports = { initializeDatabase, queryDB, insertDB };
