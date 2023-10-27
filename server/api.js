@@ -12,6 +12,16 @@ const encrypted = aes.encrypt('plain-text')
 const decrypted = aes.decrypt(encrypted)
 
 let db;
+
+
+
+const JSEncrypt = require('jsencrypt');
+const publicKey = localStorage.getItem('publicKey');
+const encrypt = new JSEncrypt();
+encrypt.setPublicKey(publicKey);
+encrypt(message);
+const message = 'Hello, world!';
+const encryptedMessage = encrypt.encrypt(message);
  
 const jwtSecret = process.env.JWT_SECRET || "supersecret";
  

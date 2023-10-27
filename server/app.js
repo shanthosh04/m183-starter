@@ -2,6 +2,13 @@ const express = require("express");
 const http = require("http");
 const { rateLimit } = require("express-rate-limit");
 const { initializeAPI } = require("./api");
+const NodeRSA = require('node-rsa');
+const key = new NodeRSA({ b: 1024 });
+const privateKey = key.exportKey('private');
+const publicKey = key.exportKey('public');
+
+res.json({ privateKey, publicKey });
+
 
 // Create the express server
 const app = express();
@@ -11,6 +18,16 @@ const limiter = rateLimit({
   standardHeaders: "draft-7",
   legacyHeaders: false,
 });
+
+if (keyData.privateKey && keyData.publicKey) {
+  // Speichern Sie die Keys im localStorage
+  localStorage.setItem("privateKey", keyData.privateKey);
+  localStorage.setItem("publicKey", keyData.publicKey);
+}
+  logoutButton.addEventListener("click", () => {
+    localStorage.removeItem("privateKey");
+    localStorage.removeItem("publicKey");
+  });
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
 app.use(express.json());
